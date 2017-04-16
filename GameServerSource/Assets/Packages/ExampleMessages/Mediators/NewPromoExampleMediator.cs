@@ -12,9 +12,6 @@ public class NewPromoExampleMediator : Mediator {
     [Inject] public UnityNetworkingData UnityNetworkingData { get; set; }
     [Inject] public LogSignal Logger { get; set; }
 
-    [Inject] public GetTitleNewsSignal GetTitleNewsSignal { get; set; }
-    [Inject] public GetTitleNewsResponseSignal GetTitleNewsResponse { get; set; }
-
     private List<TitleNewsItem> _titleNews = new List<TitleNewsItem>();
     private float _time;
     private bool firstTimeCheck = true;
@@ -36,7 +33,11 @@ public class NewPromoExampleMediator : Mediator {
 
     private void CheckForPromo()
     {
-        GetTitleNewsResponse.AddOnce((result) =>
+        //TODO: New Error Handling
+        PlayFab.PlayFabServerAPI.GetTitleNews(new GetTitleNewsRequest()
+        {
+            Count = 10
+        }, (result) =>
         {
             if (firstTimeCheck)
             {
@@ -57,11 +58,7 @@ public class NewPromoExampleMediator : Mediator {
             }
 
 
-        });
-        GetTitleNewsSignal.Dispatch(new GetTitleNewsRequest()
-        {
-            Count = 10
-        });
+        }, null);
         firstTimeCheck = false;
     }
 

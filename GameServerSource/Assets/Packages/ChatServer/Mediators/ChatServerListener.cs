@@ -14,7 +14,6 @@ public class ChatServerListener : Mediator {
     [Inject] public JoinChannelSignal JoinChannelSignal { get; set; }
     [Inject] public UnityNetworkingData UnityNetworkingData { get; set; }
     [Inject] public ClientDisconnectedSignal ClientDisconnectedSignal { get; set; }
-    [Inject] public WritePlayerEventSignal WritePlayerEventSignal { get; set; }
 
     public override void OnRegister()
     {
@@ -104,7 +103,7 @@ public class ChatServerListener : Mediator {
             {
                 channel.Members.Remove(member);
                 Debug.Log("Member found in channel "  + channel.ChannelId + ", Removing User.");
-                WritePlayerEventSignal.Dispatch(new WriteServerPlayerEventRequest()
+                PlayFab.PlayFabServerAPI.WritePlayerEvent(new WriteServerPlayerEventRequest()
                 {
                     EventName = "PlayerLeftChat",
                     PlayFabId = member.MemberId,
@@ -112,7 +111,7 @@ public class ChatServerListener : Mediator {
                     {
                         {"ChannelId", channel.ChannelId}
                     }
-                });
+                }, null, null);
             }
 
             if (channel.Members.Count == 0 && channel.IsInviteOnly)
