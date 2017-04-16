@@ -178,19 +178,11 @@ namespace PlayFab.Internal
                 reqContainer.HttpRequest = (HttpWebRequest)WebRequest.Create(reqContainer.FullUrl);
                 reqContainer.HttpRequest.UserAgent = "UnityEngine-Unity; Version: " + _unityVersion;
                 reqContainer.HttpRequest.SendChunked = false;
-                reqContainer.HttpRequest.Proxy = null;
                 // Prevents hitting a proxy if no proxy is available. TODO: Add support for proxy's.
-                reqContainer.HttpRequest.Headers.Add("X-ReportErrorAsSuccess", "true");
-                // Without this, we have to catch WebException instead, and manually decode the result
-                reqContainer.HttpRequest.Headers.Add("X-PlayFabSDK", PlayFabSettings.VersionString);
+                reqContainer.HttpRequest.Proxy = null;
 
-                switch (reqContainer.AuthKey)
-                {
-#if ENABLE_PLAYFABSERVER_API || ENABLE_PLAYFABADMIN_API
-                    case AuthType.DevSecretKey: reqContainer.HttpRequest.Headers.Add("X-SecretKey", PlayFabSettings.DeveloperSecretKey); break;
-#endif
-                    case AuthType.LoginSession: reqContainer.HttpRequest.Headers.Add("X-Authorization", _authKey); break;
-                }
+                foreach (var pair in reqContainer.RequestHeaders)
+                    reqContainer.HttpRequest.Headers.Add(pair.Key, pair.Value);
 
                 reqContainer.HttpRequest.ContentType = "application/json";
                 reqContainer.HttpRequest.Method = "POST";
@@ -288,8 +280,7 @@ namespace PlayFab.Internal
         {
             try
             {
-                var httpResult = JsonWrapper.DeserializeObject<HttpResponseObject>(reqContainer.JsonResponse,
-                    PlayFabUtil.ApiSerializerStrategy);
+                var httpResult = JsonWrapper.DeserializeObject<HttpResponseObject>(reqContainer.JsonResponse);
 
 #if PLAYFAB_REQUEST_TIMING
                 reqContainer.Timing.WorkerRequestMs = (int)reqContainer.Stopwatch.ElapsedMilliseconds;
@@ -302,7 +293,7 @@ namespace PlayFab.Internal
                     return;
                 }
 
-                reqContainer.JsonResponse = JsonWrapper.SerializeObject(httpResult.data, PlayFabUtil.ApiSerializerStrategy);
+                reqContainer.JsonResponse = JsonWrapper.SerializeObject(httpResult.data);
                 reqContainer.DeserializeResultJson(); // Assigns Result with a properly typed object
                 reqContainer.ApiResult.Request = reqContainer.ApiRequest;
                 reqContainer.ApiResult.CustomData = reqContainer.CustomData;

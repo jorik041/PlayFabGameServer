@@ -6,6 +6,8 @@ namespace PlayFab.Internal
 {
     public static class PlayFabIdfa
     {
+        static PlayFabIdfa() { }
+
         public static void DoAttributeInstall()
         {
             var attribRequest = new AttributeInstallRequest();
@@ -17,7 +19,7 @@ namespace PlayFab.Internal
             PlayFabClientAPI.AttributeInstall(attribRequest, OnAttributeInstall, null);
         }
 
-        public static void OnAttributeInstall(AttributeInstallResult result)
+        private static void OnAttributeInstall(AttributeInstallResult result)
         {
             // This is for internal testing.
             PlayFabSettings.AdvertisingIdType += "_Successful";
@@ -29,7 +31,7 @@ namespace PlayFab.Internal
             if (!PlayFabSettings.DisableAdvertising && PlayFabSettings.AdvertisingIdType != null && PlayFabSettings.AdvertisingIdValue != null)
                 DoAttributeInstall();
         }
-#elif (!UNITY_5_3 && !UNITY_5_4 && !UNITY_5_5) // This section for 5.3 or newer
+#elif (!UNITY_5_3 && !UNITY_5_4 && !UNITY_5_5 && !UNITY_5_6) // This section for 5.3 or newer
         public static void OnPlayFabLogin()
         {
             if (PlayFabSettings.DisableAdvertising)

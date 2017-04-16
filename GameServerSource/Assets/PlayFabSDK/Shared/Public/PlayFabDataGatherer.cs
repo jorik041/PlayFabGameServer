@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 using System.Text;
 using UnityEngine.Rendering;
 #if NETFX_CORE
@@ -73,7 +72,6 @@ namespace PlayFab
 #if UNITY_5
             // UNITY_5 Application info
             ProductName = Application.productName;
-            ProductBundle = Application.identifier; //Only Used on iOS & Android
             Version = Application.version;
             Company = Application.companyName;
             Platform = Application.platform;
@@ -82,6 +80,13 @@ namespace PlayFab
 #endif
 #if UNITY_5 && !UNITY_5_0
             GraphicsType = SystemInfo.graphicsDeviceType;
+#endif
+
+            //Only Used on iOS & Android
+#if UNITY_5_6_OR_NEWER && UNITY_ANDROID && (UNITY_IOS || UNITY_IPHONE)
+            ProductBundle = Application.identifier; 
+#elif UNITY_ANDROID && (UNITY_IOS || UNITY_IPHONE)
+            ProductBundle = Application.bundleIdentifier;
 #endif
 
             // Application info
@@ -118,7 +123,7 @@ namespace PlayFab
 
         public string GenerateReport()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("Logging System Info: ========================================\n");
             foreach (var field in GetType().GetTypeInfo().GetFields())
             {

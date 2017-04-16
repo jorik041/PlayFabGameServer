@@ -245,6 +245,15 @@ namespace PlayFab.AdminModels
         public List<VirtualCurrencyData> VirtualCurrencies;
     }
 
+    [Serializable]
+    public class ApiCondition
+    {
+        /// <summary>
+        /// Require that API calls contain an RSA encrypted payload or signed headers.
+        /// </summary>
+        public Conditionals? HasSignatureOrEncryption;
+    }
+
     /// <summary>
     /// Contains information for a ban.
     /// </summary>
@@ -556,6 +565,13 @@ namespace PlayFab.AdminModels
         /// Most recent revision for this Cloud Script version
         /// </summary>
         public int LatestRevision;
+    }
+
+    public enum Conditionals
+    {
+        Any,
+        True,
+        False
     }
 
     [Serializable]
@@ -1146,7 +1162,8 @@ namespace PlayFab.AdminModels
 
     public enum EffectType
     {
-        Allow
+        Allow,
+        Deny
     }
 
     [Serializable]
@@ -2224,7 +2241,8 @@ namespace PlayFab.AdminModels
         Facebook,
         IOSDevice,
         AndroidDevice,
-        Twitch
+        Twitch,
+        WindowsHello
     }
 
     [Serializable]
@@ -2414,7 +2432,7 @@ namespace PlayFab.AdminModels
         /// </summary>
         public string Action;
         /// <summary>
-        /// The effect this statement will have. The only supported effect is 'Allow'.
+        /// The effect this statement will have. It could be either Allow or Deny
         /// </summary>
         public EffectType Effect;
         /// <summary>
@@ -2425,6 +2443,10 @@ namespace PlayFab.AdminModels
         /// A comment about the statement. Intended solely for bookeeping and debugging.
         /// </summary>
         public string Comment;
+        /// <summary>
+        /// Additional conditions to be applied for API Resources.
+        /// </summary>
+        public ApiCondition ApiConditions;
     }
 
     [Serializable]
@@ -2508,6 +2530,10 @@ namespace PlayFab.AdminModels
         /// Banned until UTC Date. If permanent ban this is set for 20 years after the original ban date.
         /// </summary>
         public DateTime? BannedUntil;
+        /// <summary>
+        /// Image URL of the player's avatar.
+        /// </summary>
+        public string AvatarUrl;
         /// <summary>
         /// Dictionary of player's statistics using only the latest version's value
         /// </summary>
@@ -2622,7 +2648,12 @@ namespace PlayFab.AdminModels
         /// <summary>
         /// status of the process of saving player statistic values of the previous version to a downloadable archive
         /// </summary>
+        [Obsolete("Use 'Status' instead", true)]
         public StatisticVersionArchivalStatus? ArchivalStatus;
+        /// <summary>
+        /// status of the statistic version
+        /// </summary>
+        public StatisticVersionStatus? Status;
         /// <summary>
         /// URL for the downloadable archive of player statistic values, if available
         /// </summary>
@@ -3132,6 +3163,15 @@ namespace PlayFab.AdminModels
         Queued,
         InProgress,
         Complete
+    }
+
+    public enum StatisticVersionStatus
+    {
+        Active,
+        SnapshotPending,
+        Snapshot,
+        ArchivalPending,
+        Archived
     }
 
     /// <summary>
@@ -3772,7 +3812,8 @@ namespace PlayFab.AdminModels
         CustomId,
         XboxLive,
         Parse,
-        Twitch
+        Twitch,
+        WindowsHello
     }
 
     [Serializable]
@@ -3845,6 +3886,10 @@ namespace PlayFab.AdminModels
         /// boolean indicating whether or not the user is currently banned for a title
         /// </summary>
         public bool? isBanned;
+        /// <summary>
+        /// URL to the player's avatar.
+        /// </summary>
+        public string AvatarUrl;
     }
 
     [Serializable]
