@@ -12,10 +12,10 @@ namespace PlayFab
 #if ENABLE_PLAYFABPLAYSTREAM_API && ENABLE_PLAYFABSERVER_API
         public static string ProductionEnvironmentPlayStreamUrl
         {
-            set { ProductionEnvironmentPlayStreamUrl = value; }
+            set { PlayFabShared.ProductionEnvironmentPlayStreamUrl = value; }
             internal get
             {
-                return string.IsNullOrEmpty(ProductionEnvironmentPlayStreamUrl) ? "http://playstreamlive.playfab.com/signalr" : ProductionEnvironmentPlayStreamUrl;
+                return string.IsNullOrEmpty(PlayFabShared.ProductionEnvironmentPlayStreamUrl) ? "http://playstreamlive.playfab.com/signalr" : PlayFabShared.ProductionEnvironmentPlayStreamUrl;
             }
         }
 #endif
